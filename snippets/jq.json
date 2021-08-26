@@ -1,0 +1,89 @@
+{
+    ".source.jq": {
+        "debug": {
+            "prefix": "dd",
+            "body": "debug",
+            "description": "Snippet for debug"
+        },
+        "debug variable": {
+            "prefix": "dv",
+            "body": "(. as $$c | {$${1:var}} | debug | \\$$c)",
+            "description": "Snippet for debug variable"
+        },
+        "debug expression": {
+            "prefix": "de",
+            "body": "(. as \\$$c | {${1:name}: (${2:expr})} | debug | \\$$c)",
+            "description": "Snippet for debug expression"
+        },
+        "def": {
+            "prefix": "def",
+            "body": "def ${1:name}: ${2:expr};",
+            "description": "Snippet for def"
+        },
+        "def arguments": {
+            "prefix": "defa",
+            "body": "def ${1:name}(${2:args}): ${3:expr};",
+            "description": "Snippet for def with arguments"
+        },
+        "if then else end": {
+            "prefix": "if",
+            "body": "if ${1:exp} then ${2:true} else ${3:false} end",
+            "description": "Snippet for if then else end"
+        },
+        "if then end": {
+            "prefix": "ife",
+            "body": "if ${1:exp} then ${2:true} end",
+            "description": "Snippet for if then end"
+        },
+        "try catch": {
+            "prefix": "try",
+            "body": "try ${1:.exp} catch ${2:.}",
+            "description": "Snippet for try catch"
+        },
+        "as var": {
+            "prefix": "as",
+            "body": "${1:exp} as \\$${2:var}",
+            "description": "Snippet for exp as $var"
+        },
+        "foreach": {
+            "prefix": "for",
+            "body": "foreach ${1:.} as \\$${2:i} (${3:init}; \\$${2:i}; \\$${2:i})",
+            "description": "Snippet for foreach expr as $var (init; update; extract)"
+        },
+        "reduce": {
+            "prefix": "re",
+            "body": "reduce ${1:.} as \\$${2:i} (${3:init}; \\$${2:i})",
+            "description": "Snippet for reduce .[] as $item (0; . + $item)"
+        },
+        "include": {
+            "prefix": "inc",
+            "body": "include \"${1:path}\";",
+            "description": "Snippet for include"
+        },
+        "include metadata": {
+            "prefix": "incm",
+            "body": "include \"${1:name}\" {${2:metadata}};",
+            "description": "Snippet for include metadata"
+        },
+        "import": {
+            "prefix": "imp",
+            "body": "import \"${1:path}\" as ${2:name};",
+            "description": "Snippet for import"
+        },
+        "import json": {
+            "prefix": "impm",
+            "body": "include \"${1:name}\" as \\$${2:name} {${3:metadata}};",
+            "description": "Snippet for import JSON"
+        },
+        "module": {
+            "prefix": "mod",
+            "body": "module {${3:metadata}};",
+            "description": "Snippet for include"
+        },
+        "label": {
+            "prefix": "label",
+            "body": "label \\$${1:var} | break \\$${1:var}",
+            "description": "Snippet for label $out | break $out"
+        }
+    }
+}
