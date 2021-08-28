@@ -3,7 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
 
 import {
@@ -16,22 +15,17 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-
-
-	console.log("BLA", "start3");
-
-	// The server is implemented in node
-	const serverModule = "/Users/wader/src/jq-lsp/jq-lsp"; /*context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);*/
-
-	// The debug options for the server
-	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-	const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
-
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
-	const serverOptions: ServerOptions = { command: serverModule, transport: TransportKind.stdio };
+	const serverOptions: ServerOptions = {
+		run: {
+			command: "jq-lsp",
+			transport: TransportKind.stdio
+		},
+		debug: {
+			command: "/Users/wader/src/jq-lsp/jq-lsp", // make configurable?
+			options: { env: { DEBUG: "1" } },
+			transport: TransportKind.stdio
+		}
+	};
 
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
@@ -45,8 +39,8 @@ export function activate(context: ExtensionContext) {
 
 	// Create the language client and start the client.
 	client = new LanguageClient(
-		'languageServerExample',
-		'Language Server Example',
+		'jqLsp',
+		'jq-lsp',
 		serverOptions,
 		clientOptions
 	);

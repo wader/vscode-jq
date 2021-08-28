@@ -1,9 +1,9 @@
 {
-	"name": "vscode-jq",
-	"description": "jq extension for VSCode",
+	"name": "jq-lsp-client",
+	"description": "jq-lsp client extension for VSCode",
 	"author": "Mattias Wadman",
 	"license": "MIT",
-	"version": "0.0.1",
+	"version": "0.0.0",
 	"publisher": "vscode",
 	"repository": {
 		"type": "git",
