@@ -27,6 +27,8 @@ cp $(go env GOPATH)/bin/jq-lsp /usr/local/bin
 ```sh
 npm install
 vsce package && code --install-extension vscode-jq-*.vsix
+# or if vsce is not installed
+npm exec @vscode/vsce package && code --install-extension vscode-jq-*.vsix
 ```
 
 If your using [dash](https://kapeli.com/dash) or [zeal](https://zealdocs.org/) I would
