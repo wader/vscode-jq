@@ -74,13 +74,13 @@
       "match": "([a-zA-Z_]\\w*::)*[a-zA-Z_]\\w*"
     },
     "format": {
-      "name": "constant.other.symbol.jq",
+      "name": "support.function.jq",
       "match": "@\\w+"
     },
     "function": {
       "name": "meta.function.jq",
       "begin": "(?<!\\.)\\bdef(?!\\s*:)\\b",
-      "end": "([a-zA-Z_]\\w*::)*[a-zA-Z_]\\w*",
+      "end": "([a-zA-Z_]\\w*::)*[a-zA-Z_@]\\w*",
       "beginCaptures": {
         "0": {
           "name": "storage.type.function.jq"
