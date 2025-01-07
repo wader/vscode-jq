@@ -4,7 +4,7 @@
 	"author": "Mattias Wadman",
 	"license": "MIT",
 	"icon": "media/jq.png",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/wader/vscode-jq"
@@ -14,15 +14,17 @@
 		"Programming Languages"
 	],
 	"keywords": [
+		"coc.nvim",
 		"multi-root ready"
 	],
 	"engines": {
-		"vscode": "^1.43.0"
+		"vscode": "^1.43.0",
+		"coc": "^0.0.82"
 	},
 	"activationEvents": [
 		"onLanguage:jq"
 	],
-	"main": "./client/out/extension",
+	"main": "./client/out/extension.js",
 	"contributes": {
 		"languages": [
 			{
