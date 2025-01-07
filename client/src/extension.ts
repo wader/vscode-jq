@@ -1,11 +1,27 @@
-import { workspace, ExtensionContext } from 'vscode';
-
-import {
-	LanguageClient,
-	LanguageClientOptions,
-	ServerOptions,
-	TransportKind
+import type { ExtensionContext as ExtensionContext_vscode } from 'vscode';
+import type {
+    LanguageClient as LanguageClient_vscode,
+    LanguageClientOptions as LanguageClientOptions_vscode,
+    ServerOptions as ServerOptions_vscode,
 } from 'vscode-languageclient/node';
+import type {
+    ExtensionContext as ExtensionContext_coc,
+    LanguageClient as LanguageClient_coc,
+    LanguageClientOptions as LanguageClientOptions_coc,
+    ServerOptions as ServerOptions_coc,
+} from 'coc.nvim';
+type LanguageClient = LanguageClient_vscode | LanguageClient_coc;
+type LanguageClientOptions = LanguageClientOptions_vscode | LanguageClientOptions_coc;
+type ServerOptions = ServerOptions_vscode | ServerOptions_coc;
+type ExtensionContext = ExtensionContext_vscode | ExtensionContext_coc;
+let vlc;
+try {
+    vlc = require('vscode-languageclient/node');
+} catch (error) {
+    vlc = require('coc.nvim');
+}
+const TransportKind = vlc.TransportKind;
+const LanguageClient = vlc.LanguageClient;
 
 let client: LanguageClient;
 

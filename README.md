@@ -1,6 +1,6 @@
 # vscode-jq
 
-jq extension for VSCode
+jq extension for VSCode/(Neo)Vim.
 
 It provides:
 - Syntax highlighting
@@ -20,6 +20,19 @@ Install [jq-lsp](https://github.com/wader/jq-lsp) and make sure it's in `$PATH`:
 ```sh
 go install github.com/wader/jq-lsp@latest
 cp $(go env GOPATH)/bin/jq-lsp /usr/local/bin
+```
+
+### Install vim extension
+
+- [coc-marketplace](https://github.com/fannheyward/coc-marketplace)
+- [npm](https://www.npmjs.com/package/vscode-jq)
+- vim:
+
+```vim
+" command line
+CocInstall vscode-jq
+" or add the following code to your vimrc
+let g:coc_global_extensions = ['vscode-jq', 'other coc-plugins']
 ```
 
 ### Package and install vscode extension

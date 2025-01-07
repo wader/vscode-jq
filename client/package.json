@@ -16,6 +16,7 @@
 		"vscode-languageclient": "^7.0.0"
 	},
 	"devDependencies": {
+		"coc.nvim": "^0.0.83-next.18",
 		"@types/vscode": "^1.52.0"
 	}
 }

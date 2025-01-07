@@ -5,6 +5,7 @@
 		"lib": ["ES2019"],
 		"outDir": "out",
 		"rootDir": "src",
+		"allowSyntheticDefaultImports": true,
 		"sourceMap": true
 	},
 	"include": ["src"],
