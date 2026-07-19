@@ -30,12 +30,10 @@ export function activate(context: ExtensionContext) {
 		run: {
 			command: "jq-lsp",
 			options: { env: process.env },
-			transport: TransportKind.stdio
 		},
 		debug: {
 			command: "jq-lsp",
 			options: { env: Object.assign({}, process.env, { DEBUG: "1" }) },
-			transport: TransportKind.stdio
 		}
 	};
 
