@@ -39,9 +39,9 @@ let g:coc_global_extensions = ['vscode-jq', 'other coc-plugins']
 
 ```sh
 npm install
+npm exec @vscode/vsce@latest package && code --install-extension vscode-jq-*.vsix
+# or if a reasonably new vsce is installed
 vsce package && code --install-extension vscode-jq-*.vsix
-# or if vsce is not installed
-npm exec @vscode/vsce package && code --install-extension vscode-jq-*.vsix
 ```
 
 If your using [dash](https://kapeli.com/dash) or [zeal](https://zealdocs.org/) I would
