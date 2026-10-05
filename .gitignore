@@ -9,4 +9,5 @@ node_modules/
 tsconfig.lsif.json
 *.lsif
 *.db
+*.vsix/server/
 *.vsix

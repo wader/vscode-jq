@@ -1,5 +1,6 @@
 {
 	"name": "vscode-jq",
+	"displayName": "jq",
 	"description": "jq extension for VSCode",
 	"author": "Mattias Wadman",
 	"license": "MIT",
@@ -18,7 +19,7 @@
 		"multi-root ready"
 	],
 	"engines": {
-		"vscode": "^1.43.0",
+		"vscode": "^1.61.0",
 		"coc": "^0.0.82"
 	},
 	"activationEvents": [
@@ -47,7 +48,18 @@
 				"language": "jq",
 				"path": "./snippets/jq.json"
 			}
-		]
+		],
+		"configuration": {
+			"title": "jq",
+			"properties": {
+				"jq.serverPath": {
+					"type": "string",
+					"default": "",
+					"scope": "machine",
+					"description": "Path to the jq-lsp executable. If empty, the jq-lsp bundled with the extension is used, falling back to jq-lsp in $PATH."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
