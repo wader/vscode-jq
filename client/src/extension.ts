@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import type { ExtensionContext as ExtensionContext_vscode } from 'vscode';
 import type {
     LanguageClient as LanguageClient_vscode,
@@ -15,24 +17,72 @@ type LanguageClientOptions = LanguageClientOptions_vscode | LanguageClientOption
 type ServerOptions = ServerOptions_vscode | ServerOptions_coc;
 type ExtensionContext = ExtensionContext_vscode | ExtensionContext_coc;
 let vlc;
+// vscode or coc.nvim module, both provide workspace and window
+let host;
 try {
     vlc = require('vscode-languageclient/node');
+    host = require('vscode');
 } catch (error) {
     vlc = require('coc.nvim');
+    host = vlc;
 }
-const TransportKind = vlc.TransportKind;
 const LanguageClient = vlc.LanguageClient;
+
+const serverBinary = process.platform === 'win32' ? 'jq-lsp.exe' : 'jq-lsp';
 
 let client: LanguageClient;
 
+// Resolve which jq-lsp to run, in order of preference:
+// 1. the jq.serverPath setting
+// 2. the binary bundled in platform-specific packages (see scripts/fetch-jq-lsp.sh)
+// 3. jq-lsp found in $PATH
+function serverCommand(context: ExtensionContext): string {
+	const configured: string = host.workspace.getConfiguration('jq').get('serverPath', '');
+	if (configured) {
+		return configured;
+	}
+
+	const bundled = path.join(context.extensionPath, 'server', serverBinary);
+	if (fs.existsSync(bundled)) {
+		if (process.platform !== 'win32') {
+			try {
+				fs.accessSync(bundled, fs.constants.X_OK);
+			} catch (error) {
+				// make sure execute permission survived packaging and extraction
+				fs.chmodSync(bundled, 0o755);
+			}
+		}
+		return bundled;
+	}
+
+	return 'jq-lsp';
+}
+
+function inPath(command: string): boolean {
+	const dirs = (process.env.PATH || '').split(path.delimiter);
+	const exts = process.platform === 'win32'
+		? (process.env.PATHEXT || '.EXE').split(';').concat([''])
+		: [''];
+	return dirs.some((dir) => exts.some((ext) => dir && fs.existsSync(path.join(dir, command + ext))));
+}
+
 export function activate(context: ExtensionContext) {
+	const command = serverCommand(context);
+	if (command === 'jq-lsp' && !inPath(command)) {
+		host.window.showErrorMessage(
+			'jq-lsp not found. Install it from https://github.com/wader/jq-lsp and make sure it is in $PATH, ' +
+			'or set "jq.serverPath".'
+		);
+		return;
+	}
+
 	const serverOptions: ServerOptions = {
 		run: {
-			command: "jq-lsp",
+			command: command,
 			options: { env: process.env },
 		},
 		debug: {
-			command: "jq-lsp",
+			command: command,
 			options: { env: Object.assign({}, process.env, { DEBUG: "1" }) },
 		}
 	};

@@ -1,0 +1,110 @@
+name: Package and publish
+
+# Builds one VSIX per platform with a bundled jq-lsp binary, plus a universal
+# VSIX without it (used by platforms without a specific build; jq-lsp must
+# then be in $PATH or set with jq.serverPath).
+#
+# On pull requests and manual runs the VSIX files are only uploaded as
+# workflow artifacts. On a pushed v* tag in the upstream repository they are
+# also published to the VS Code Marketplace and Open VSX and attached to a
+# GitHub release. See PUBLISHING.md for the required account setup.
+
+on:
+  push:
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # jq-lsp release bundled into the platform-specific packages
+  JQ_LSP_VERSION: "0.1.18"
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - linux-x64
+          - linux-arm64
+          - darwin-x64
+          - darwin-arm64
+          - win32-x64
+          - win32-arm64
+          - universal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Fetch jq-lsp
+        if: matrix.target != 'universal'
+        run: scripts/fetch-jq-lsp.sh "${{ matrix.target }}"
+      - name: Package
+        run: |
+          if [ "${{ matrix.target }}" = universal ]; then
+            npx @vscode/vsce@4 package -o "vscode-jq-universal.vsix"
+          else
+            npx @vscode/vsce@4 package --target "${{ matrix.target }}" -o "vscode-jq-${{ matrix.target }}.vsix"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix-${{ matrix.target }}
+          path: "*.vsix"
+          if-no-files-found: error
+
+  publish:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v') && github.repository == 'wader/vscode-jq'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: vsix-*
+          merge-multiple: true
+          path: dist
+      - name: Check version and publisher
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          publisher="$(node -p 'require("./package.json").publisher')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+          if [ "$publisher" = dummy ]; then
+            echo "::error::package.json publisher is still the placeholder \"dummy\", see PUBLISHING.md"
+            exit 1
+          fi
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "::warning::VSCE_PAT secret not set, skipping VS Code Marketplace"
+            exit 0
+          fi
+          npx @vscode/vsce@4 publish --packagePath dist/*.vsix
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "::warning::OVSX_PAT secret not set, skipping Open VSX"
+            exit 0
+          fi
+          for f in dist/*.vsix; do
+            npx ovsx@1 publish --packagePath "$f"
+          done
+      - name: Attach to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.vsix

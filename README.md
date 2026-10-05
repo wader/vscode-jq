@@ -14,8 +14,18 @@ It provides:
 
 ## Install
 
+### Install vscode extension
+
+Search for "jq" in the VSCode extensions view, or install it from the
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=<publisher>.vscode-jq)
+or [Open VSX](https://open-vsx.org/extension/<publisher>/vscode-jq) (VSCodium etc.).
+
+jq-lsp is bundled for Linux, macOS and Windows (x64 and arm64). On other platforms
+install jq-lsp as described below, or point the `jq.serverPath` setting to it.
+
 ### Install jq-lsp
 
+Only needed for vim, or on platforms without a bundled jq-lsp.
 Install [jq-lsp](https://github.com/wader/jq-lsp) and make sure it's in `$PATH`:
 ```sh
 go install github.com/wader/jq-lsp@latest
@@ -35,7 +45,7 @@ CocInstall vscode-jq
 let g:coc_global_extensions = ['vscode-jq', 'other coc-plugins']
 ```
 
-### Package and install vscode extension
+### Build and install vscode extension from source
 
 ```sh
 npm install
@@ -43,6 +53,9 @@ npm exec @vscode/vsce@latest package && code --install-extension vscode-jq-*.vsi
 # or if a reasonably new vsce is installed
 vsce package && code --install-extension vscode-jq-*.vsix
 ```
+
+This package does not include jq-lsp. See [PUBLISHING.md](PUBLISHING.md) for how to build
+one that does, and how releases are published.
 
 If your using [dash](https://kapeli.com/dash) or [zeal](https://zealdocs.org/) I would
 recommend installing the jq docset. Search for "jq" under "User Contributed Docsets" in dash
